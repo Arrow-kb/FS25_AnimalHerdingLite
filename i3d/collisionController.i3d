@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="collisionController.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.10"/>
+  </Asset>
+
+  <Files>
+  </Files>
+
+
+  <Materials>
+    <Material name="UnnamedMaterial" materialId="5" diffuseColor="1 1 1 1">
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="collisionController.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <Shape name="frontCollision" translation="0 0.15 0" shapeId="1" nodeId="8" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="groundCollisionLow" translation="0 -0.6 -0.7" scale="1 0.1 0.1" shapeId="1" nodeId="9" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="groundCollisionHigh" translation="0 -0.5 -0.7" scale="1 0.1 0.1" shapeId="1" nodeId="10" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+  </Scene>
+
+</i3D>

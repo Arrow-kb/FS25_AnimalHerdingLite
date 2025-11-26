@@ -1,0 +1,71 @@
+<modDesc descVersion="104">
+    <author>Arrow</author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>Animal Herding - Lite</en>
+        <de>Tierhaltung – Lite</de>
+        <fr>Élevage D'Animaux - Lite</fr>
+    </title>
+    <description>
+        <en>
+        <![CDATA[ This mod allows all animals to be dynamically herded at will. When they are being herded, animals will walk away from the player, allowing them to be interactively moved between pastures. The Lite version of this mod only handles herding between husbandries, whereas the full version contains more dynamic custom features such as path finding, husbandry navigation, possibility of custom animations, individual behaviours and more, moving the entirety of the visual animal system from the engine to LUA scripts, allowing for much more mod control over animals.
+
+Animals will stop for structures, objects, vehicles and other animals, allowing you to create routes for them to follow, such as in the screenshots provided.
+
+Animals respond to players in vehicles as well as players on foot, allowing the use of vehicles such as quad bikes to herd them. 
+
+To start herding, you must be inside a husbandry and then press the "Start Herding" button (default left shift + n). All visual animals in that husbandry will then become herdable and will respond to the player.
+
+Herded animals will automatically be moved into a husbandry when they walk inside it, with the exception of the original husbandry where they came from which will only become available for them after leaving the husbandry for a certain amount of time. Alternatively, you can press the "Stop Herding" button, and all herded animals will be moved into the closest husbandry to their current position, if there is one available.
+
+Currently only supports singleplayer, multiplayer is planned. It is also planned for animals to follow the player when holding a bag of food.
+
+It is not recommended to herd animals in sheds with very high flooring, as the animals may get stuck. ]]>
+        </en>
+        <de>
+        <![CDATA[ Mit diesem Mod können alle Tiere nach Belieben dynamisch zusammengetrieben werden. Wenn sie zusammengetrieben werden, entfernen sich die Tiere vom Spieler, sodass sie interaktiv zwischen Weiden hin- und herbewegt werden können. Die Lite-Version dieses Mods unterstützt nur das Hüten zwischen Viehzuchtbetrieben, während die Vollversion dynamischere benutzerdefinierte Funktionen wie Wegfindung, Navigation in der Viehzucht, die Möglichkeit benutzerdefinierter Animationen, individuelle Verhaltensweisen und mehr enthält, wodurch das gesamte visuelle Tiersystem von der Engine auf LUA-Skripte verlagert wird, was eine viel bessere Mod-Kontrolle über die Tiere ermöglicht.
+
+Die Tiere halten vor Gebäuden, Objekten, Fahrzeugen und anderen Tieren an, sodass Sie Routen für sie erstellen können, wie in den bereitgestellten Screenshots zu sehen ist.
+
+Die Tiere reagieren sowohl auf Spieler in Fahrzeugen als auch auf Spieler zu Fuß, sodass Sie Fahrzeuge wie Quads zum Hüten verwenden können. 
+
+Um mit dem Hüten zu beginnen, müssen Sie sich in einem Gehege befinden und dann die Taste „Hüten starten” drücken (standardmäßig linke Umschalttaste + n). Alle sichtbaren Tiere in diesem Gehege können dann getrieben werden und reagieren auf den Spieler.
+
+Getriebene Tiere werden automatisch in ein Gehege gebracht, wenn sie es betreten, mit Ausnahme des ursprünglichen Geheges, aus dem sie gekommen sind, das ihnen erst wieder zur Verfügung steht, wenn sie das Gehege für eine bestimmte Zeit verlassen haben. Alternativ können Sie die Taste „Hüten beenden“ drücken, woraufhin alle gehüteten Tiere in die ihrem aktuellen Standort nächstgelegene Viehzucht gebracht werden, sofern eine solche verfügbar ist.
+
+Derzeit wird nur Einzelspieler unterstützt, Multiplayer ist geplant. Es ist auch geplant, dass Tiere dem Spieler folgen, wenn er einen Sack mit Futter bei sich hat.
+
+Es wird davon abgeraten, Tiere in Ställen mit sehr hohem Boden zu halten, da die Tiere dort stecken bleiben können. ]]>
+        </de>
+        <fr>
+        <![CDATA[ Ce mod permet de rassembler tous les animaux de manière dynamique à volonté. Lorsqu'ils sont rassemblés, les animaux s'éloignent du joueur, ce qui permet de les déplacer de manière interactive entre les pâturages. La version Lite de ce mod ne gère que le rassemblement entre les élevages, tandis que la version complète contient des fonctionnalités personnalisées plus dynamiques telles que la recherche de chemin, la navigation entre les élevages, la possibilité d'animations personnalisées, des comportements individuels et plus encore, déplaçant l'intégralité du système visuel des animaux du moteur vers des scripts LUA, ce qui permet un contrôle beaucoup plus important des animaux par le mod.
+
+Les animaux s'arrêteront devant les structures, les objets, les véhicules et les autres animaux, ce qui vous permettra de créer des itinéraires à suivre, comme dans les captures d'écran fournies.
+
+Les animaux réagissent aux joueurs dans les véhicules ainsi qu'aux joueurs à pied, ce qui permet d'utiliser des véhicules tels que des quads pour les rassembler. 
+
+Pour commencer à rassembler les animaux, vous devez vous trouver à l'intérieur d'un élevage, puis appuyer sur le bouton « Start Herding » (par défaut, shift gauche + n). Tous les animaux visibles dans cette exploitation deviendront alors guidables et réagiront au joueur.
+
+Les animaux guidés seront automatiquement déplacés vers une exploitation lorsqu'ils y entreront, à l'exception de l'exploitation d'origine d'où ils proviennent, qui ne leur sera accessible qu'après avoir quitté l'exploitation pendant un certain temps. Vous pouvez également appuyer sur le bouton « Arrêter le rassemblement » et tous les animaux rassemblés seront déplacés vers l'élevage le plus proche de leur position actuelle, s'il y en a un de disponible.
+
+Actuellement, seul le mode solo est pris en charge, mais le mode multijoueur est prévu. Il est également prévu que les animaux suivent le joueur lorsqu'il tient un sac de nourriture.
+
+Il n'est pas recommandé de regrouper les animaux dans des hangars dont le sol est très haut, car ils risquent de rester coincés. ]]>
+        </fr>
+    </description>
+    <iconFilename>icon_AnimalHerdingLite.dds</iconFilename>
+    <multiplayer supported="false"/>
+	<l10n filenamePrefix="translations/translation"/>
+    <extraSourceFiles>
+        <sourceFile filename="src/player/PlayerInputComponent.lua"/>
+        <sourceFile filename="src/Medium.lua"/>
+    </extraSourceFiles>
+	<inputBinding>
+		<actionBinding action="HerdingLite">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_n"/>
+		</actionBinding>
+	</inputBinding>
+	<actions>
+		<action name="HerdingLite"/>
+	</actions>
+</modDesc>
