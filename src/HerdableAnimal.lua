@@ -1,12 +1,27 @@
 HerdableAnimal = {}
+HerdableAnimal.WALK_DISTANCE = 20
+HerdableAnimal.RUN_DISTANCE = 5
+HerdableAnimal.TURN_DISTANCE = 15
 
 local herdableAnimal_mt = Class(HerdableAnimal)
 local modDirectory = g_currentModDirectory
+local modName = g_currentModName
+local nextId = 1
+
+
+function HerdableAnimal.getNextId()
+
+	nextId = nextId + 1
+	return nextId - 1
+
+end
 
 
 function HerdableAnimal.new(placeable, rootNode, meshNode, shaderNode, skinNode, animationSet, animationCache, proxyNode)
 
 	local self = setmetatable({}, herdableAnimal_mt)
+
+	if g_server ~= nil then self.id = HerdableAnimal.getNextId() end
 
 	I3DUtil.setShaderParameterRec(meshNode, "dirt", 0, nil, nil, nil)
 
@@ -18,6 +33,7 @@ function HerdableAnimal.new(placeable, rootNode, meshNode, shaderNode, skinNode,
 	self.placeableLeaveTimer = 0
 	self.stuckTimer = 0
 	self.terrainHeight = 0
+	self.startWalking = false
 
 	self.nodes = {
 		["root"] = rootNode,
@@ -50,6 +66,11 @@ function HerdableAnimal.new(placeable, rootNode, meshNode, shaderNode, skinNode,
 
 	self.collisionController = AnimalCollisionController.new(proxyNode)
 
+	self.mapHotspot = AnimalHotspot.new()
+	self.mapHotspot:setAnimal(self)
+	g_currentMission:addMapHotspot(self.mapHotspot)
+	self.lastStuckTurn = 0
+
 	return self
 
 end
@@ -57,6 +78,9 @@ end
 
 function HerdableAnimal:delete()
 
+	g_animalManager:deleteAnimalCollisionNode(self.collisionController.proxy)
+	g_currentMission:removeMapHotspot(self.mapHotspot)
+	self.mapHotspot:delete()
 	delete(self.nodes.root)
 
 end
@@ -71,6 +95,8 @@ function HerdableAnimal:loadFromXMLFile(xmlFile, key, isRealisticLivestockLoaded
 	self.position.x = xmlFile:getFloat(key .. ".position#x", 0)
 	self.position.y = xmlFile:getFloat(key .. ".position#y", 0)
 	self.position.z = xmlFile:getFloat(key .. ".position#z", 0)
+
+	self:updateTerrainHeight(true)
 
 	self.rotation.x = xmlFile:getFloat(key .. ".rotation#x", 0)
 	self.rotation.y = xmlFile:getFloat(key .. ".rotation#y", 0)
@@ -126,10 +152,123 @@ function HerdableAnimal:saveToXMLFile(xmlFile, key)
 end
 
 
+function HerdableAnimal:readStream(streamId)
+
+	self.id = streamReadUInt8(streamId)
+	self.placeable = streamReadString(streamId)
+
+	if #self.placeable == 0 then self.placeable = nil end
+
+	self.placeableLeaveTimer = streamReadFloat32(streamId)
+	self.stuckTimer = streamReadFloat32(streamId)
+
+	self.position.x = streamReadFloat32(streamId)
+	self.position.y = streamReadFloat32(streamId)
+	self.position.z = streamReadFloat32(streamId)
+
+	self:updateTerrainHeight(true)
+
+	self.rotation.x = streamReadFloat32(streamId)
+	self.rotation.y = streamReadFloat32(streamId)
+	self.rotation.z = streamReadFloat32(streamId)
+
+	local classObject = ClassUtil.getClassObject(streamReadString(streamId)) or AnimalCluster
+	local subTypeIndex = streamReadUInt8(streamId)
+
+	self.cluster = classObject.new()
+	self.cluster:readStream(streamId)
+
+	if classObject == AnimalCluster or classObject == AnimalClusterHorse then self.cluster.subTypeIndex = subTypeIndex end
+
+end
+
+
+function HerdableAnimal:writeStream(streamId)
+
+	streamWriteUInt8(streamId, self.id)
+	streamWriteString(streamId, self.placeable or "")
+	streamWriteFloat32(streamId, self.placeableLeaveTimer)
+	streamWriteFloat32(streamId, self.stuckTimer)
+
+	streamWriteFloat32(streamId, self.position.x)
+	streamWriteFloat32(streamId, self.position.y)
+	streamWriteFloat32(streamId, self.position.z)
+
+	streamWriteFloat32(streamId, self.rotation.x)
+	streamWriteFloat32(streamId, self.rotation.y)
+	streamWriteFloat32(streamId, self.rotation.z)
+
+	streamWriteString(streamId, ClassUtil.getClassNameByObject(self.cluster))
+	streamWriteUInt8(streamId, self.cluster.subTypeIndex)
+	self.cluster:writeStream(streamId)
+
+end
+
+
+function HerdableAnimal:readUpdateStream(streamId)
+
+	local position, rotation = self.position, self.rotation
+
+	position.x = streamReadFloat32(streamId)
+	position.z = streamReadFloat32(streamId)
+	rotation.y = streamReadFloat32(streamId)
+
+end
+
+
+function HerdableAnimal:writeUpdateStream(streamId)
+
+	local position, rotation = self.position, self.rotation
+
+	streamWriteFloat32(streamId, position.x)
+	streamWriteFloat32(streamId, position.z)
+	streamWriteFloat32(streamId, rotation.y)
+
+end
+
+
+function HerdableAnimal:setHotspotIcon(animalTypeIndex)
+
+	self.mapHotspot:setIcon(animalTypeIndex)
+
+end
+
+
+function HerdableAnimal:setHotspotFarmId(farmId)
+
+	self.mapHotspot:setOwnerFarmId(farmId)
+
+end
+
+
+function HerdableAnimal:getHotspotFarmId()
+
+	return self.mapHotspot:getOwnerFarmId()
+
+end
+
+
 function HerdableAnimal:setData(visualAnimalIndex, x, y, z, w)
 
 	self.visualAnimalIndex = visualAnimalIndex
 	self.tiles = { x, y, z, w }
+
+end
+
+
+function HerdableAnimal:getData()
+
+	return self.visualAnimalIndex, self.tiles
+
+end
+
+
+function HerdableAnimal:getPlayerTeleportPosition()
+
+	local dx, _, dz = localDirectionToWorld(self.nodes.root, 0, 0, -1)
+	local radius = self.collisionController.radius
+
+	return self.position.x + dx * radius, self.position.y + 0.2, self.position.z + dz * radius
 
 end
 
@@ -178,6 +317,7 @@ function HerdableAnimal:setPosition(x, y, z)
 	self.position.x = x
 	self.position.y = y
 	self.position.z = z
+	self:updateTerrainHeight(true)
 
 end
 
@@ -195,6 +335,14 @@ function HerdableAnimal:createCollisionController(height, radius, animalTypeInde
 
 	self.collisionController:setAttributes(height, radius)
 	self.collisionController:load(self.nodes.root, animalTypeIndex, self.cluster.age or 12)
+	g_animalManager:addAnimalCollisionNode(self, self.collisionController.proxy)
+
+end
+
+
+function HerdableAnimal:validateSpeed(animalTypeIndex)
+
+
 
 end
 
@@ -221,11 +369,18 @@ function HerdableAnimal:update(dT)
 	local isWalkingFromPlayer = false
 	local hasCollision = false
 
-	state.wasWalking, state.wasRunning, state.wasIdle = state.isWalking, state.isIdle, state.isRunning
+	state.wasWalking, state.wasRunning, state.wasIdle = state.isWalking, state.isRunning, state.isIdle
+
+	if self.startWalking then
+
+		self.startWalking = false
+		state.isIdle = false
+
+	end
 
 	if not state.isIdle then
 	
-		self.collisionController:updateCollisions()
+		self.collisionController:updateCollisions(state.isTurning)
 		hasCollision, needsYAdjustment = self.collisionController:getHasCollision()
 
 		self.position.y = self.terrainHeight + (needsYAdjustment and 0.2 or 0)
@@ -241,7 +396,7 @@ function HerdableAnimal:update(dT)
 
 			local distance
 
-			if self.herdingTarget.distance < 20 then
+			if self.herdingTarget.distance < HerdableAnimal.WALK_DISTANCE and not (self.herdingTarget.followingBucket and self.herdingTarget.distance < HerdableAnimal.RUN_DISTANCE / 2) then
 
 				distance = self.herdingTarget.distance
 				isWalkingFromPlayer = true
@@ -274,10 +429,19 @@ function HerdableAnimal:update(dT)
 				state.isWalking = isMoving
 				state.isRunning = false
 		
-				if isMoving and ((isWalkingFromPlayer and distance < 5) or (not isWalkingFromPlayer and distance > 25)) then
+				if isMoving then
+				
+					if self.herdingTarget.followingBucket then
+						
+						state.isRunning = distance > HerdableAnimal.WALK_DISTANCE - HerdableAnimal.RUN_DISTANCE
+						state.isWalking = not state.isRunning
+
+					elseif (isWalkingFromPlayer and distance < HerdableAnimal.RUN_DISTANCE) or (not isWalkingFromPlayer and distance > 25) then
 		
-					state.isRunning = true
-					state.isWalking = false
+						state.isRunning = true
+						state.isWalking = false
+
+					end
 
 				end
 
@@ -317,30 +481,57 @@ function HerdableAnimal:update(dT)
 	end
 
 
-	--if state.isTurning or (hasCollision and self.stuckTimer > 1000) then
-	if state.isTurning then
+	-- ##########################################################################
+	-- TODO:
+	-- Animal sometimes gets stuck on tight corners when being herded with bucket
+	-- Have tried to mitigate this but still occasionally happens
+	-- ##########################################################################
+
+
+	if state.isTurning or (hasCollision and not state.isIdle and self.herdingTarget.followingBucket) then
 
 		local ry = math.deg(self.rotation.y)
 		--local turnTarget = hasCollision and self.stuckTimer > 1000 and (ry + 10) or math.deg(state.targetDirY)
 		local turnTarget = math.deg(state.targetDirY)
 
-		state.lastDirY = self.rotation.y
+		local canTurnLeft = self.collisionController:getCanTurnLeft()
+		local canTurnRight = self.collisionController:getCanTurnRight()
 
+		state.lastDirY = self.rotation.y
 		ry, turnTarget = ry + 180, turnTarget + 180
+
+		if self.herdingTarget.followingBucket and hasCollision then
+
+			if canTurnRight and canTurnLeft then
+				turnTarget = ry + 10 * (ry < turnTarget and 1 or -1)
+				self.lastStuckTurn = (ry < turnTarget and 1 or -1)
+			elseif canTurnLeft then
+				turnTarget = ry - 10
+				self.lastStuckTurn = -1
+			elseif canTurnRight then
+				turnTarget = ry + 10
+				self.lastStuckTurn = 1
+			end
+
+		else
+
+				self.lastStuckTurn = 0
+
+		end
 
 		if ry < turnTarget then
 
-			if math.abs(ry - turnTarget) < 180 then
+			if canTurnLeft and math.abs(ry - turnTarget) < 180 then
 				ry = ry + dT * 0.035
-			else
+			elseif canTurnRight then
 				ry = ry - dT * 0.035
 			end
 
 		else
 
-			if math.abs(ry - turnTarget) < 180 then
+			if canTurnRight and math.abs(ry - turnTarget) < 180 then
 				ry = ry - dT * 0.035
-			else
+			elseif canTurnLeft then
 				ry = ry + dT * 0.035
 			end
 
@@ -371,38 +562,96 @@ function HerdableAnimal:update(dT)
 end
 
 
-function HerdableAnimal:updateRelativeToPlayer(px, py, pz)
+function HerdableAnimal:updateRelativeToPlayers(players, updateTerrain)
 
 	local x, y, z = self.position.x, self.position.y, self.position.z
+	local ax, az, closestDistance
+	local numClosePlayers = 0
+	local state = self.state
+	local hasBucketInRange = false
 
+	for _, player in pairs(players) do
+
+		local px, pz = player[1], player[2]
+		local distance = MathUtil.vector2Length(px - x, pz - z)
+
+		if distance > HerdableAnimal.WALK_DISTANCE then continue end
+
+		if player[3] then
+			if not hasBucketInRange then closestDistance = nil end
+			hasBucketInRange = true
+			if closestDistance == nil or distance < closestDistance then ax, az = px, pz end
+		elseif not hasBucketInRange then
+		
+			if ax == nil or az == nil then
+				ax, az = px, pz
+			else
+				ax, az = ax + px, az + pz
+			end
+
+		end
+
+		if closestDistance == nil or distance < closestDistance then closestDistance = distance end
+
+		numClosePlayers = numClosePlayers + 1
+
+	end
+
+	if ax == nil or az == nil then
 	
-	local dx, dz = x - px, z - pz
-	local dy = math.atan2(dx, dz)
+		state.isIdle = true
+		self.herdingTarget.distance = HerdableAnimal.WALK_DISTANCE + 1
+		if updateTerrain then self:updateTerrainHeight() end
+		return
+	
+	end
 
+	if not hasBucketInRange then ax, az = ax / numClosePlayers, az / numClosePlayers end
+
+	local dx, dz = x - ax, z - az
+	local dy
+
+	if hasBucketInRange then
+		local dirX, dirZ = MathUtil.vector2Normalize(ax - x, az - z)
+		dy = MathUtil.getYRotationFromDirection(dirX, dirZ)
+	else
+		dy = math.atan2(dx, dz)
+	end
+
+	if state.isIdle and not self.startWalking and not (hasBucketInRange and closestDistance < HerdableAnimal.RUN_DISTANCE / 2) then self.startWalking = true end
 
 	self.herdingTarget = {
 		["ry"] = dy,
-		["distance"] = MathUtil.vector2Length(px - x, pz - z),
+		["distance"] = closestDistance,
+		["followingBucket"] = hasBucketInRange,
 		["dx"] = dx,
 		["dz"] = dz,
 		["x"] = x,
 		["z"] = z,
-		["px"] = px,
-		["pz"] = pz
+		["ax"] = ax,
+		["az"] = az
 	}
 
-	if self.herdingTarget.distance > 12.5 or (self.rotation.y <= dy + 0.05 and self.rotation.y >= dy - 0.05) then
-		self.state.isTurning = false
-		self.state.targetDirY = self.rotation.y
+	if self.herdingTarget.distance > HerdableAnimal.TURN_DISTANCE or (self.rotation.y <= dy + 0.05 and self.rotation.y >= dy - 0.05) or self.collisionController:getHasPlayerInVicinity() then
+		state.isTurning = false
+		state.targetDirY = self.rotation.y
 	else
-		self.state.isTurning = true
-		self.state.targetDirY = dy
+		state.isTurning = true
+		state.targetDirY = dy
 	end
 
-	if self.herdingTarget.distance < 25 then self.state.isIdle = false end
+	if self.herdingTarget.distance < HerdableAnimal.WALK_DISTANCE and state.isIdle then self.startWalking = true end
 
-	local terrainHeight = getTerrainHeightAtWorldPos(g_terrainNode, self.position.x, 0, self.position.z) + 0.01
-	self.terrainHeight = terrainHeight
+	if updateTerrain then self:updateTerrainHeight() end
+
+end
+
+
+function HerdableAnimal:updateTerrainHeight(updateY)
+
+	self.terrainHeight = getTerrainHeightAtWorldPos(g_terrainNode, self.position.x, 0, self.position.z) + 0.01
+
+	if updateY then self.position.y = self.position.y > self.terrainHeight and self.position.y or self.terrainHeight end
 
 end
 
@@ -521,6 +770,14 @@ function HerdableAnimal:setIsTurning(value)
 end
 
 
+function HerdableAnimal:showInfo(box)
+
+	box:setTitle(g_i18n:getText("ahl_herdedAnimal", modName))
+	self.cluster:showInfo(box)
+
+end
+
+
 function HerdableAnimal:visualise()
 
 	local info = {
@@ -536,11 +793,11 @@ function HerdableAnimal:visualise()
 	table.insert(info[2].content, { ["sizeFactor"] = 0.7, ["name"] = "stepZ = ", ["value"] = tostring(stepZ) })
 
 	self.animation:visualise(self.nodes.root, info)
+	self.collisionController:visualise(info, self.position.x, self.position.y + 0.15, self.position.z, self.rotation.x, self.rotation.y, self.rotation.z)
+	table.insert(info[#info].content, { ["sizeFactor"] = 0.7, ["name"] = "lastStuckTurn = ", ["value"] = tostring(self.lastStuckTurn) })
 
 	local infoTable = DebugInfoTable.new()
 	infoTable:createWithNodeToCamera(self.nodes.root, info, 1, 0.05)
 	g_debugManager:addFrameElement(infoTable)
-
-	self.collisionController:visualise(self.position.x, self.position.y + 0.15, self.position.z, self.rotation.x, self.rotation.y, self.rotation.z)
 
 end

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="animal.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.10"/>
+  </Asset>
+
+  <Files>
+  </Files>
+
+
+  <Materials>
+  </Materials>
+
+
+  <Shapes>
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="animal" clipDistance="300" nodeId="6">
+      <TransformGroup name="graphics" translation="-0.639236 -0.4 0.0435444" rotation="0 180 0" nodeId="7"/>
+      <TransformGroup name="handNode" translation="0.483213 -0.00909144 -0.0190978" rotation="-179.7 0 0" nodeId="8"/>
+      <TransformGroup name="firstPersonNode" translation="0.32797 0.052 0.135639" rotation="-180 -90 -180" nodeId="9"/>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

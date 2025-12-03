@@ -1,0 +1,14 @@
+<handTools>
+	<types>
+		<type name="bucket" parent="base" xmlFile="handTools/bucket/bucket.xml" isStoreItem="true">
+			<specialization name="bucket"/>
+		</type>
+		<type name="animal" parent="base" xmlFile="handTools/animal/animal.xml" isStoreItem="false">
+			<specialization name="animal"/>
+		</type>
+	</types>
+	<specializations>
+		<specialization name="bucket" className="HandToolBucket" filename="src/handTools/specializations/HandToolBucket.lua"/>
+		<specialization name="animal" className="HandToolAnimal" filename="src/handTools/specializations/HandToolAnimal.lua"/>
+	</specializations>
+</handTools>

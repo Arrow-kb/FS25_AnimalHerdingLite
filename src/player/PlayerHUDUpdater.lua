@@ -2,12 +2,47 @@ PlayerHUDUpdater.updateRaycastObject = Utils.appendedFunction(PlayerHUDUpdater.u
 
     self.isHerdableAnimal = false
 
-    if self.isAnimal == false and self.currentRaycastTarget ~= nil and entityExists(self.currentRaycastTarget) then
+    if not self.isAnimal and self.currentRaycastTarget ~= nil and entityExists(self.currentRaycastTarget) then
 
-        local object = g_currentMission:getNodeObject(self.currentRaycastTarget)
+        local animal = g_animalManager:getAnimalFromCollisionNode(self.currentRaycastTarget, g_localPlayer.farmId)
 
-        if self.currentRaycastTarget ~= 0 then print(self.currentRaycastTarget) end
+        if animal ~= nil then
+
+            self.object = animal
+            self.isHerdableAnimal = true
+
+        end
 
     end
 
 end)
+
+
+PlayerHUDUpdater.update = Utils.appendedFunction(PlayerHUDUpdater.update, function(self, dt)
+
+    if self.isHerdableAnimal then self:showAnimalInfo(self.object) end
+    if Platform.playerInfo.showVehicleInfo and self.carriedAnimal ~= nil then self:showHandToolInfo(self.carriedAnimal) end
+
+end)
+
+
+function PlayerHUDUpdater:showHandToolInfo(object)
+
+    if object == nil then return end
+
+    if self.handToolBox == nil then self.handToolBox = g_currentMission.hud.infoDisplay:createBox(InfoDisplayKeyValueBox) end
+
+	local box = self.handToolBox
+
+	box:clear()
+	object:showInfo(box)
+	box:showNextFrame()
+
+end
+
+
+function PlayerHUDUpdater:setCarriedAnimal(handTool)
+
+    self.carriedAnimal = handTool
+
+end

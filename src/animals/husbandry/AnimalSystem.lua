@@ -349,7 +349,7 @@ function AH_AnimalSystem:loadAnimalConfig(superFunc, animalType, directory, conf
 
     if not returnValue then return false end
 
-    g_animalManager:addAnimalTypeToCache(animalType)
+    g_animalManager:addAnimalTypeToCache(animalType, directory)
 
     --self:addAnimalTypeToCache(animalType, directory)
 

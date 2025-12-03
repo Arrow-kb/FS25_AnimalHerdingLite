@@ -7,16 +7,27 @@
 
 
 local files = {
-	"animals/husbandry/AnimalSystem.lua",
+	"animals/husbandry/cluster/AnimalCluster.lua",
 	"animals/husbandry/placeables/PlaceableHusbandryAnimals.lua",
+	"animals/husbandry/AnimalSystem.lua",
 	"animation/AnimalAnimation.lua",
+	"events/AnimalPickupEvent.lua",
+	"events/HerdingEvent.lua",
+	"events/HerdingForceStopEvent.lua",
+	"events/HerdingPlayerSyncEvent.lua",
+	"events/HerdingRequestEvent.lua",
+	"events/HerdingSyncEvent.lua",
+	"gui/hud/mapHotspots/AnimalHotspot.lua",
+	"gui/InGameMenuMapFrame.lua",
 	"gui/MPLoadingScreen.lua",
-	--"player/PlayerHUDUpdater.lua",
+	"player/Player.lua",
+	"player/PlayerHUDUpdater.lua",
 	"AnimalCollisionController.lua",
 	"AnimalManager.lua",
 	"FSBaseMission.lua",
 	"FSCareerMissionInfo.lua",
-	"HerdableAnimal.lua"
+	"HerdableAnimal.lua",
+	"debug/AnimalHerdingProfiler.lua"
 }
 
 

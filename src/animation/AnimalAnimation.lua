@@ -12,6 +12,7 @@ function AnimalAnimation.new(animal, animationSet, animationCache)
 	self.animationSet = animationSet
 	self.cache = animationCache
 	self.tracks = {}
+	self.speedModifiers = {}
 
 	self.currentAnimationTime = 0
 	self.targetAnimationTime = 10000
@@ -54,6 +55,7 @@ function AnimalAnimation:update(dT, isWalkingFromPlayer)
 
 	local state = self.state
 	local animationSet = self.animationSet
+	local speedModifiers = self.speedModifiers
 
 	local dirChange = state.dirY - state.lastDirY
 	self.turnDirection = dirChange > 0 and "left" or (dirChange < 0 and "right" or "none")
@@ -119,13 +121,14 @@ function AnimalAnimation:update(dT, isWalkingFromPlayer)
 
 	else
 
-		if self.currentAnimationTime >= self.targetAnimationTime and not isWalkingFromPlayer then
-			self.animal:forceNewState()
-			state = self.state
-			self.currentAnimationTime = 0
-			dirChange = state.dirY - state.lastDirY
-			self.turnDirection = dirChange > 0 and "left" or (dirChange < 0 and "right" or "none")
-		end
+		--if self.currentAnimationTime >= self.targetAnimationTime and not isWalkingFromPlayer then
+			--print("0")
+			--self.animal:forceNewState()
+			--state = self.state
+			--self.currentAnimationTime = 0
+			--dirChange = state.dirY - state.lastDirY
+			--self.turnDirection = dirChange > 0 and "left" or (dirChange < 0 and "right" or "none")
+		--end
 
 		if state.isIdle and state.wasWalking then
 				
@@ -176,6 +179,7 @@ function AnimalAnimation:update(dT, isWalkingFromPlayer)
 				assignAnimTrackClip(animationSet, 0, animation.clip.index)
 				setAnimTrackBlendWeight(animationSet, 0, 1)
 				enableAnimTrack(animationSet, 0)
+				setAnimTrackSpeedScale(animationSet, 0, 1)
 				
 				self.currentAnimationTime = 0
 				self.targetAnimationTime = self:getTargetAnimationDuration("idle")
@@ -233,10 +237,12 @@ function AnimalAnimation:update(dT, isWalkingFromPlayer)
 				assignAnimTrackClip(animationSet, 0, animation.clipLeft.index)
 				setAnimTrackBlendWeight(animationSet, 0, 0.5)
 				enableAnimTrack(animationSet, 0)
+				setAnimTrackSpeedScale(animationSet, 0, speedModifiers[targetId] or 1)
 
 				assignAnimTrackClip(animationSet, 1, animation.clipRight.index)
 				setAnimTrackBlendWeight(animationSet, 1, 0.5)
 				enableAnimTrack(animationSet, 1)
+				setAnimTrackSpeedScale(animationSet, 1, speedModifiers[targetId] or 1)
 				
 				self.currentAnimationTime = 0
 				self.targetAnimationTime = self:getTargetAnimationDuration(targetId)
@@ -284,7 +290,12 @@ end
 function AnimalAnimation:getRandomAnimation(id)
 
 	local state = self.cache.states[id]
+
 	if state == nil then return nil end
+
+	if state[id] ~= nil then return state[id] end
+	if state[id .. "1"] ~= nil then return state[id .. "1"] end
+
 	local numAnimations = 0
 
 	for _, animation in pairs(state) do numAnimations = numAnimations + 1 end
@@ -309,6 +320,7 @@ end
 function AnimalAnimation:getMovementSpeed()
 
 	local speed, numTracks = 0, 0
+	local speedModifiers = self.speedModifiers
 
 	if self.transition == nil then
 
@@ -316,7 +328,7 @@ function AnimalAnimation:getMovementSpeed()
 
 			if not track.enabled then continue end
 
-			speed = speed + track.speed * track.blend
+			speed = speed + track.speed * track.blend * (speedModifiers[track.id] or 1)
 			numTracks = numTracks + 1
 
 		end
@@ -329,7 +341,7 @@ function AnimalAnimation:getMovementSpeed()
 
 			if not track.enabled then continue end
 
-			speed = speed + track.speed * track.blend
+			speed = speed + track.speed * track.blend * (speedModifiers[track.id] or 1)
 			numTracks = numTracks + 1
 
 		end
@@ -338,7 +350,7 @@ function AnimalAnimation:getMovementSpeed()
 
 			if not track.enabled then continue end
 
-			speed = speed + track.speed * track.blend
+			speed = speed + track.speed * track.blend * (speedModifiers[track.id] or 1)
 			numTracks = numTracks + 1
 
 		end
@@ -347,7 +359,7 @@ function AnimalAnimation:getMovementSpeed()
 
 	if numTracks == 0 then return 0 end
 
-	return math.clamp(speed / numTracks, 0, 2)
+	return math.clamp(speed, 0, 2)
 
 end
 
@@ -363,6 +375,7 @@ function AnimalAnimation:startTransition(stateIdFrom, stateIdTo, idFrom, idTo)
 
 	if animationTo == nil or animationFrom == nil then return end
 
+	local speedModifiers = self.speedModifiers
 	local templateTransition = animationFrom.transitions[idTo]
 
 	if templateTransition == nil then
@@ -480,6 +493,7 @@ function AnimalAnimation:startTransition(stateIdFrom, stateIdTo, idFrom, idTo)
 		assignAnimTrackClip(self.animationSet, trackIndex, track.clip.index)
 		setAnimTrackBlendWeight(self.animationSet, trackIndex, track.blend)
 		enableAnimTrack(self.animationSet, trackIndex)
+		setAnimTrackSpeedScale(self.animationSet, trackIndex, speedModifiers[track.id] or 1)
 
 		trackIndex = trackIndex + 1
 
@@ -491,6 +505,7 @@ function AnimalAnimation:startTransition(stateIdFrom, stateIdTo, idFrom, idTo)
 		assignAnimTrackClip(self.animationSet, trackIndex, track.clip.index)
 		setAnimTrackBlendWeight(self.animationSet, trackIndex, track.blend)
 		enableAnimTrack(self.animationSet, trackIndex)
+		setAnimTrackSpeedScale(self.animationSet, trackIndex, speedModifiers[track.id] or 1)
 
 		trackIndex = trackIndex + 1
 
@@ -565,5 +580,12 @@ function AnimalAnimation:visualise(node, info)
 		end
 
 	end
+
+end
+
+
+function AnimalAnimation:changeSpeedForState(stateId, modifier)
+
+	self.speedModifiers[stateId] = modifier
 
 end

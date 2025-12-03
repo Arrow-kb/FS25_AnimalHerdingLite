@@ -2,5 +2,11 @@
 	<texts>
 		<text name="ahl_startHerding" text="Beginnen Sie mit dem Hüten"/>
 		<text name="ahl_stopHerding" text="Hören Sie auf zu hüten"/>
+		<text name="ahl_herdedAnimal" text="Herdentier"/>
+		<text name="ahl_pickupAnimal" text="Tier abholen"/>
+		<text name="ahl_carriedAnimal" text="Getragenes Tier"/>
+		<text name="ahl_feedBucket" text="Futterbehälter"/>
+		<text name="ahl_function_bucket" text="Mit einem Futterschaufel können Sie Tiere zu sich herantreiben."/>
+		<text name="input_HerdingLite" text=""/>
 	</texts>
 </l10n>

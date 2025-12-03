@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="proxy.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.10"/>
+  </Asset>
+
+  <Files>
+  </Files>
+
+
+  <Materials>
+    <Material name="lambert1" materialId="5" diffuseColor="0.501961 0.501961 0.501961 1">
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="proxy.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <Shape name="proxy" shapeId="1" kinematic="true" collisionFilterGroup="0x10200000" collisionFilterMask="0xfffffbff" density="0.0001" nodeId="8" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="5"/>
+  </Scene>
+
+</i3D>

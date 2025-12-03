@@ -19,9 +19,12 @@
   </Shapes>
 
   <Scene>
-    <Shape name="frontCollision" translation="0 0.15 0" shapeId="1" nodeId="8" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
-    <Shape name="groundCollisionLow" translation="0 -0.6 -0.7" scale="1 0.1 0.1" shapeId="1" nodeId="9" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
-    <Shape name="groundCollisionHigh" translation="0 -0.5 -0.7" scale="1 0.1 0.1" shapeId="1" nodeId="10" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="frontCollision" translation="0 0.15 0.2" shapeId="1" nodeId="8" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="groundCollisionLow" translation="0 -0.6 -0.5" scale="1 0.1 0.1" shapeId="1" nodeId="9" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="groundCollisionHigh" translation="0 -0.5 -0.5" scale="1 0.1 0.1" shapeId="1" nodeId="10" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="leftCollision" translation="0.7 0.15 -0.7" scale="0.5 1 1" shapeId="1" nodeId="11" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="rightCollision" translation="-0.7 0.15 -0.7" scale="0.5 1 1" shapeId="1" nodeId="12" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
+    <Shape name="playerCollision" translation="0 0.15 -3.5" scale="1.25 1 1.25" shapeId="1" nodeId="21" castsShadows="false" receiveShadows="false" distanceBlending="false" materialIds="5"/>
   </Scene>
 
 </i3D>

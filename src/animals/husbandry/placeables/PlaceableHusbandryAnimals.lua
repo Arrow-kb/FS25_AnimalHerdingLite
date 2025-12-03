@@ -3,7 +3,7 @@ PlaceableHusbandryAnimals.registerFunctions = Utils.appendedFunction(PlaceableHu
 end)
 
 
-function PlaceableHusbandryAnimals:toggleHerding()
+function PlaceableHusbandryAnimals:toggleHerding(animals)
 
 	local spec = self.spec_husbandryAnimals
 	local uniqueId = self:getUniqueId()
@@ -13,6 +13,7 @@ function PlaceableHusbandryAnimals:toggleHerding()
 	local animalTypeIndex = self:getAnimalTypeIndex()
 	local clustersToRemove = {}
 	local hasRealisticLivestock = AnimalManager.CONFLICTS.REALISTIC_LIVESTOCK
+	local farmId = self:getOwnerFarmId()
 
 	local function makeAnimalHerdable(husbandryId, animalId, cluster)
 
@@ -33,7 +34,7 @@ function PlaceableHusbandryAnimals:toggleHerding()
 		local shaderNode = I3DUtil.indexToObject(node, cache.shader)
 		local meshNode = I3DUtil.indexToObject(node, cache.mesh)
 		local skeletonNode = I3DUtil.indexToObject(node, cache.skeleton)
-		local proxyNode = cache.proxy ~= nil and I3DUtil.indexToObject(node, cache.proxy)
+		local proxyNode = cache.proxy ~= nil and I3DUtil.indexToObject(node, cache.proxy) or nil
 		local skinNode = getChildAt(skeletonNode, 0)
 		local animationSet = getAnimCharacterSet(skinNode)
 
@@ -56,7 +57,10 @@ function PlaceableHusbandryAnimals:toggleHerding()
 			animal:setCluster(newCluster)
 
 		end
-
+		
+		animal:setHotspotIcon(animalTypeIndex)
+		animal:setHotspotFarmId(farmId)
+		animal:validateSpeed(animalTypeIndex)
 		animal:createCollisionController(cache.navMeshAgent.height, cache.navMeshAgent.radius, animalTypeIndex)
 		animal:setData(visualAnimalIndex, x, y, z, w)
 
@@ -64,7 +68,7 @@ function PlaceableHusbandryAnimals:toggleHerding()
 		animal:updateRotation()
 		
 		table.insert(clustersToRemove, cluster)
-		table.insert(g_animalManager.animals, animal)
+		table.insert(animals, animal)
 
 	end
 
@@ -115,7 +119,7 @@ function PlaceableHusbandryAnimals:toggleHerding()
 
 		end
 
-		for _, animal in pairs(g_animalManager.animals) do
+		for _, animal in pairs(animals) do
 
 			local cluster = animal.cluster
 			local data = clusterIdToNumAnimals[cluster.oldId]

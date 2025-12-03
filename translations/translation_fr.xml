@@ -2,5 +2,11 @@
 	<texts>
 		<text name="ahl_startHerding" text="Commencer à rassembler"/>
 		<text name="ahl_stopHerding" text="Arrêtez de rassembler"/>
+		<text name="ahl_herdedAnimal" text="Animal en troupeau"/>
+		<text name="ahl_pickupAnimal" text="Ramassage d'animaux"/>
+		<text name="ahl_carriedAnimal" text="Animal transporté"/>
+		<text name="ahl_feedBucket" text="Seau à Nourriture"/>
+		<text name="ahl_function_bucket" text="Un seau à nourriture peut être utilisé pour rassembler les animaux vers vous."/>
+		<text name="input_HerdingLite" text=""/>
 	</texts>
 </l10n>

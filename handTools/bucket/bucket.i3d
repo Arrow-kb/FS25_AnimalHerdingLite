@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="bucket.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.10"/>
+  </Asset>
+
+  <Files>
+    <File fileId="4" filename="feed.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="default" materialId="5">
+      <Texture fileId="4"/>
+    </Material>
+    <Material name="Material.001" materialId="6" diffuseColor="0.4 0.2 0 1">
+    </Material>
+    <Material name="Material.001" materialId="7" diffuseColor="0.901961 0.901961 0.901961 1" specularColor="0.4 1 1">
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="bucket.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="bucket" clipDistance="300" nodeId="13">
+      <TransformGroup name="graphics" scale="0.1 0.1 0.1" nodeId="14">
+        <Shape name="attacher" translation="0 1.23682 1.14157" rotation="-90 -0 28" scale="0.00157102 0.00622303 0.00157102" shapeId="1" nodeId="15" castsShadows="true" receiveShadows="true" doubleSided="true" materialIds="7"/>
+        <Shape name="bucket" shapeId="2" nodeId="16" castsShadows="true" receiveShadows="true" doubleSided="true" materialIds="7"/>
+        <Shape name="handle" translation="0 2.18166 0" rotation="90 -0 0" scale="0.03 0.131936 0.03" shapeId="3" nodeId="17" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="feed" translation="0 0.921301 0" scale="1.12 1 1.12" shapeId="4" nodeId="18" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      </TransformGroup>
+      <TransformGroup name="handNode" translation="-0.00232729 0.290712 -0.0175281" rotation="-179.7 1.08955 106.518" nodeId="19"/>
+      <TransformGroup name="firstPersonNode" translation="0.32797 0.277442 0.135639" rotation="-180 -90 -180" nodeId="20"/>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

@@ -2,5 +2,11 @@
 	<texts>
 		<text name="ahl_startHerding" text="Start Herding"/>
 		<text name="ahl_stopHerding" text="Stop Herding"/>
+		<text name="ahl_herdedAnimal" text="Herded Animal"/>
+		<text name="ahl_pickupAnimal" text="Pickup Animal"/>
+		<text name="ahl_carriedAnimal" text="Carried Animal"/>
+		<text name="ahl_feedBucket" text="Feed Bucket"/>
+		<text name="ahl_function_bucket" text="A feed bucket can be used to herd animals towards you."/>
+		<text name="input_HerdingLite" text=""/>
 	</texts>
 </l10n>
