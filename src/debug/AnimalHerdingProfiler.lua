@@ -35,8 +35,8 @@ function AnimalHerdingProfiler:setupFunctions()
 		[AnimalHotspot] = "AnimalHotspot",
 		[AnimalManager] = "AnimalManager",
 		[AnimalPickupEvent] = "AnimalPickupEvent",
-		--[modTable.HandToolAnimal] = "HandToolAnimal",
-		--[modTable.HandToolBucket] = "HandToolBucket",
+		[modTable.HandToolAnimal] = "HandToolAnimal",
+		[modTable.HandToolBucket] = "HandToolBucket",
 		[HerdableAnimal] = "HerdableAnimal",
 		[HerdingEvent] = "HerdingEvent",
 		[HerdingForceStopEvent] = "HerdingForceStopEvent",
@@ -109,11 +109,11 @@ function AnimalHerdingProfiler:visualise()
     setTextAlignment(RenderText.ALIGN_LEFT)
 	setTextBold(true)
 	
-	renderText(0.775, 0.875, 0.01, string.format("%s (%s - v%s) Profiler", modTitle, modSource, modVersion))
-	renderText(0.7, 0.85, 0.01, "Function")
-	renderText(0.85, 0.85, 0.01, "Time")
-	renderText(0.9, 0.85, 0.01, "Calls")
-	renderText(0.925, 0.85, 0.01, "Time / Call")
+	renderText(0.775, 0.875, self.offsetY / 2, string.format("%s (%s - v%s) Profiler", modTitle, modSource, modVersion))
+	renderText(0.7, 0.85, self.offsetY / 2, "Function")
+	renderText(0.85, 0.85, self.offsetY / 2, "Time")
+	renderText(0.9, 0.85, self.offsetY / 2, "Calls")
+	renderText(0.925, 0.85, self.offsetY / 2, "Time / Call")
 
 	setTextColor(1, 1, 1, 1)
 	setTextBold(false)
@@ -150,10 +150,10 @@ function AnimalHerdingProfiler:visualise()
 
 		local profile = sortedTimes[i]
 
-		renderText(0.7, y, 0.01, profile.name)
-		renderText(0.85, y, 0.01, string.format("%.6f ms", profile.time))
-		renderText(0.9, y, 0.01, string.format("%s", profile.calls))
-		renderText(0.925, y, 0.01, string.format("%.6f ms", profile.time / profile.calls))
+		renderText(0.7, y, self.offsetY / 2, profile.name)
+		renderText(0.85, y, self.offsetY / 2, string.format("%.6f ms", profile.time))
+		renderText(0.9, y, self.offsetY / 2, string.format("%s", profile.calls))
+		renderText(0.925, y, self.offsetY / 2, string.format("%.6f ms", profile.time / profile.calls))
 
 		y = y - self.offsetY
 

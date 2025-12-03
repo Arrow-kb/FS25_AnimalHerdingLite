@@ -8,7 +8,7 @@ PlayerHUDUpdater.updateRaycastObject = Utils.appendedFunction(PlayerHUDUpdater.u
 
         if animal ~= nil then
 
-            self.object = animal
+            self.object = animal.cluster
             self.isHerdableAnimal = true
 
         end

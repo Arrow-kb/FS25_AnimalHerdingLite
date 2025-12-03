@@ -183,9 +183,9 @@ function HandToolAnimal:setEngineAnimal(husbandryId, animalId)
 	link(self.graphicalNode, node)
 	setVisibility(node, true)
 
-	local meshNode = I3DUtil.indexToObject(node, cache.posedMesh)
-	I3DUtil.setShaderParameterRec(meshNode, "atlasInvSizeAndOffsetUV", x, y, z, w, false)
-	I3DUtil.setShaderParameterRec(meshNode, "dirt", 0, nil, nil, nil)
+	--local meshNode = I3DUtil.indexToObject(node, cache.posedMesh)
+	I3DUtil.setShaderParameterRec(node, "atlasInvSizeAndOffsetUV", x, y, z, w, false)
+	I3DUtil.setShaderParameterRec(node, "dirt", 0, nil, nil, nil)
 
 	spec.tiles = { x, y, z, w }
 	spec.visualAnimalIndex = visualAnimalIndex
@@ -235,9 +235,9 @@ function HandToolAnimal:setHerdingAnimal(animalNode, farmId)
 	link(self.graphicalNode, node)
 	setVisibility(node, true)
 
-	local meshNode = I3DUtil.indexToObject(node, cache.posedMesh)
-	I3DUtil.setShaderParameterRec(meshNode, "atlasInvSizeAndOffsetUV", x, y, z, w, false)
-	I3DUtil.setShaderParameterRec(meshNode, "dirt", 0, nil, nil, nil)
+	--local meshNode = I3DUtil.indexToObject(node, cache.posedMesh)
+	I3DUtil.setShaderParameterRec(node, "atlasInvSizeAndOffsetUV", x, y, z, w, false)
+	I3DUtil.setShaderParameterRec(node, "dirt", 0, nil, nil, nil)
 
 	spec.visualAnimalIndex = visualAnimalIndex
 	spec.tiles = animal.tiles
