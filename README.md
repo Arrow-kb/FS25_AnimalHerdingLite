@@ -1,3 +1,10 @@
+### Important Notice
+
+Due to several factors (mainly due to a long persistent trend of _difficulty_ with GIANTS Software), development and maintenance of all my mods are hereby ceased. I have removed all my mods from the GIANTS ModHub, and no further development will be supported on any platform.
+
+For certain mods, I will be uploading my private development versions to their respective GitHub projects. Anyone who wishes to continue development or maintenance of any mod is allowed to do so, and upload it to the ModHub, with appropriate credit. Any questions related to continued development can be directed to **arrow_kb** on discord.
+
+
 # FS25_AnimalHerdingLite
 
 This mod allows all animals to be dynamically herded at will. When they are being herded, animals will walk away from the player, allowing them to be interactively moved between pastures. The Lite version of this mod only handles herding between husbandries, whereas the full version contains more dynamic custom features such as path finding, husbandry navigation, possibility of custom animations, individual behaviours and more, moving the entirety of the visual animal system from the engine to LUA scripts, allowing for much more mod control over animals.
